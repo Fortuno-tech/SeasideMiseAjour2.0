@@ -36,6 +36,7 @@ public class SecurityConfig {
     private static final String[] ROUTES_PUBLIQUES = {
         "/auth/login",
         "/auth/register",
+        "/auth/refresh",  // pas besoin d'access token pour rafraichir
         "/actuator/health"
     };
 
@@ -45,7 +46,7 @@ public class SecurityConfig {
             // Desactiver CSRF (on utilise jwt , pas de session)
             .csrf(AbstractHttpConfigurer::disable)
 
-            // Configurer CORS pour Frontend (React )
+            // Configurer CORS pour Jessy 
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
             // Definir les routes
@@ -90,7 +91,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // ─── CORS pour React.js en développement ────────────────
+    // ─── CORS pour Jessy en développement ────────────────
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

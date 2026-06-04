@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.seaside.seaside_api.entity.enums.RoleUsers;
 
 import jakarta.persistence.CascadeType;
@@ -69,6 +70,7 @@ public class Utilisateur implements UserDetails {
     private RoleUsers role = RoleUsers.CLIENT;
 
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Evenement> evenements;
 
     //--------------- Hooks JPA ----------------------

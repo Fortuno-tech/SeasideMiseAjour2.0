@@ -1,6 +1,7 @@
 package com.seaside.seaside_api.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -50,11 +51,14 @@ public class Evenement {
 
     @NotNull
     @Column(name = "date_evenement", nullable = false)
-    private LocalDateTime dateEvenement;
+    private LocalDate dateEvenement;
 
     @Size(max = 50)
     @Column(name = "lieu", length = 50)
     private String lieu;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
 
     @Min(0)
     @Column(name = "capacite_maximale", nullable = false)

@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthResponse {
 
-    private String token;
-    private String type;
+    private String token; // access token 15 minutes
+    private String refreshToken; // refresh token - 7 jours
+    private String type;       // Toujours bearer
     private String email;
     private String nomUtilisateur;
     private RoleUsers role;

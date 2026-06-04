@@ -2,12 +2,14 @@ package com.seaside.seaside_api.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.seaside.seaside_api.dto.request.LoginRequest;
 import com.seaside.seaside_api.dto.request.RegisterRequest;
 import com.seaside.seaside_api.dto.response.AuthResponse;
+import com.seaside.seaside_api.entity.RefreshToken;
 import com.seaside.seaside_api.entity.Utilisateur;
 import com.seaside.seaside_api.entity.enums.RoleUsers;
 import com.seaside.seaside_api.repository.UtilisateurRepository;
@@ -23,6 +25,7 @@ public class AuthService {
     private final PasswordEncoder passwordEnconEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     //  ----------  Inscription --------------------
     public AuthResponse inscrire(RegisterRequest request) {
@@ -49,10 +52,12 @@ public class AuthService {
         utilisateurRepository.save(utilisateur);
 
         // Generer le token jwt
-        String token = jwtUtil.genererToken(utilisateur);
+        String accessToken = jwtUtil.genererToken(utilisateur);
+        RefreshToken refresh = refreshTokenService.creer(utilisateur);
 
         return AuthResponse.builder()
-            .token(token)
+            .token(accessToken)
+            .refreshToken(refresh.getToken())
             .type("Bearer")
             .email(utilisateur.getEmail())
             .nomUtilisateur(utilisateur.getNomUtilisateur())
@@ -76,10 +81,12 @@ public class AuthService {
         Utilisateur utilisateur = utilisateurRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
 
-        String token = jwtUtil.genererToken(utilisateur);
+        String accesstoken = jwtUtil.genererToken(utilisateur);
+        RefreshToken refresh = refreshTokenService.creer(utilisateur);
 
         return AuthResponse.builder()
-            .token(token)
+            .token(accesstoken)
+            .refreshToken(refresh.getToken())
             .type("Bearer")
             .email(utilisateur.getEmail())
             .nomUtilisateur(utilisateur.getNomUtilisateur())
@@ -87,5 +94,27 @@ public class AuthService {
             .build();
     }
 
+    // -----------Renouveler l'access token
+    public AuthResponse rafraichir(String refreshTokenStr) {
+        RefreshToken refreshToken = refreshTokenService.valider(refreshTokenStr);
+        Utilisateur utilisateur   = refreshToken.getUtilisateur();
+        String nouvelAccessToken  = jwtUtil.genererToken(utilisateur);
 
+        return AuthResponse.builder()
+                .token(nouvelAccessToken)
+                .refreshToken(refreshTokenStr) // refresh token reste le même
+                .type("Bearer")
+                .email(utilisateur.getEmail())
+                .nomUtilisateur(utilisateur.getNomUtilisateur())
+                .role(utilisateur.getRole())
+                .build();
+    }
+
+
+    // Deconnexion
+    public void seDeconnecter() {
+        Utilisateur utilisateur = (Utilisateur) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+        refreshTokenService.supprimerParUtilisateur(utilisateur);
+    }
 }

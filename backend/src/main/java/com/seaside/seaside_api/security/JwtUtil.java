@@ -27,7 +27,17 @@ public class JwtUtil {
     // ------------Gereration du Token ------------
     public String genererToken(UserDetails userdetails) {
         Map<String, Object> claims = new HashMap<>();
+    
+
+        // Ajout du role
+        String role = userdetails.getAuthorities().stream()
+                .findFirst()
+                .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+                .orElse("USER");
+        claims.put("role", role);
+
         return construireToken(claims, userdetails.getUsername());
+        
     }
 
     private String construireToken(Map<String, Object> claims, String email) {
@@ -39,6 +49,18 @@ public class JwtUtil {
                 .signWith(getCleSecrete())
                 .compact();
     }
+
+
+    //  POUR EXTRAIRE LE role (optionnel, pour déboguer)
+    public String extraireRole(String token) {
+        return Jwts.parser()
+                .verifyWith(getCleSecrete())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
+    }
+
 
      // ------------ VALIDATION DU TOKEN -----------------
      public boolean estValide(String token, UserDetails userDetails) {

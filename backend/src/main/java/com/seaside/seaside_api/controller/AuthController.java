@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.seaside.seaside_api.dto.request.LoginRequest;
+import com.seaside.seaside_api.dto.request.RefreshRequest;
 import com.seaside.seaside_api.dto.request.RegisterRequest;
 import com.seaside.seaside_api.dto.response.AuthResponse;
 import com.seaside.seaside_api.service.AuthService;
@@ -36,5 +37,19 @@ public class AuthController {
         AuthResponse response = authService.seConnecter(request);
         return ResponseEntity.ok(response);
     }
+
+    // POST /Auth/refresh - public (pas besoin d'acces token)
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> rafraichir(@Valid @RequestBody RefreshRequest request){
+        return ResponseEntity.ok(authService.rafraichir(request.getRefreshToken()));
+    }
+
+    // POST /auth/logout natao protege (besoin d'acccess token pour savoir qui se deconnecte)
+    @PostMapping("/logout")
+    public ResponseEntity<Void> seDeconnecter() {
+        authService.seConnecter(null);
+        return ResponseEntity.noContent().build();
+    }
+
     
 }
