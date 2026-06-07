@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
+public class AuthResponse { // les retours pour l'authentification
 
-    private String token; // access token 15 minutes
+    private String token; // access token 60 minutes
     private String refreshToken; // refresh token - 7 jours
     private String type;       // Toujours bearer
     private String email;

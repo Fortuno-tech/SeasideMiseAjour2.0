@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
     
     private final UtilisateurRepository utilisateurRepository;
-    private final PasswordEncoder passwordEnconEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
@@ -44,7 +44,7 @@ public class AuthService {
         Utilisateur utilisateur = Utilisateur.builder()
                 .nomUtilisateur(request.getNomUtilisateur())
                 .email(request.getEmail())
-                .motsDePasseHash(passwordEnconEncoder.encode(request.getMotDePasse()))// ← hash BCrypt
+                .motsDePasseHash(passwordEncoder.encode(request.getMotDePasse()))// ← hash BCrypt
                 .role(RoleUsers.CLIENT)
                 .estActif(true)
                 .build();
