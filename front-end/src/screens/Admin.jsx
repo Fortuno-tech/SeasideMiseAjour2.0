@@ -231,7 +231,7 @@ function StatCard({ label, value }) {
 function UserModal({ onClose, onSubmit, initialData }) {
   const [form, setForm] = useState(
     initialData ||
-    { id: null, name: "", email: "", role: "", status: "" }
+    { id: null, name: "", email: "", role: "", status: "", password: "", passwordConfirm: "" }
   );
   const [error, setError] = useState("");
   const isEdit = Boolean(initialData);
@@ -241,6 +241,8 @@ function UserModal({ onClose, onSubmit, initialData }) {
     e.preventDefault();
     if (!form.name.trim()) return setError("Le nom est requis");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return setError("Email invalide");
+    if (!form.password.trim()) return setError("Le mot de passe est requis");
+    if (form.password !== form.passwordConfirm) return setError("Les mots de passe ne correspondent pas");
     setError("");
     onSubmit(form);
   };
@@ -257,6 +259,15 @@ function UserModal({ onClose, onSubmit, initialData }) {
           <div className="modal-field">
             <label className="modal-label">Email</label>
             <input type="email" className="modal-input" value={form.email} onChange={update("email")} required />
+          </div>
+
+          <div className="modal-field">
+            <label className="modal-label">Mot de passe</label>
+            <input className="modal-input" type="password" value={form.password} onChange={update("password")} required />
+          </div>
+          <div className="modal-field">
+            <label className="modal-label">Confirmer le mot de passe</label>
+            <input className="modal-input" type="password" value={form.passwordConfirm} onChange={update("passwordConfirm")} required />
           </div>
           <div className="modal-row">
             <div className="modal-field">
