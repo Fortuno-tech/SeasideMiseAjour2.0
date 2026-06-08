@@ -40,7 +40,11 @@ const Login = () => {
 
       setEmail("");
       setPassword("");
-      navigate("/dashboard");
+      if (userRole === "ADMIN") {
+        navigate("/admin/");
+      } else {
+        navigate("/dashboard");
+      }
       //success
     } catch (error) {
       if (error.response?.status === 401) {

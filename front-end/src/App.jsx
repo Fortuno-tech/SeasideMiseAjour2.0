@@ -18,9 +18,8 @@ function App() {
             <Route element={<Dashboard/>} path='/'/>
             <Route element={<Dashboard/>} path='/dashboard'/>
             <Route element={<EventDetails/>} path='/event/:eventId'/>
-            
+            <Route element={<Admin/>} path='/admin' />
           </Route>
-          <Route element={<Admin/>} path='/admin' />
           <Route element={<NotFoundPage/>} path='*'/>
         </Routes>
       </BrowserRouter>
