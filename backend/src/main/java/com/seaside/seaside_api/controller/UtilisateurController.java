@@ -49,7 +49,14 @@ public class UtilisateurController {
         return ResponseEntity.noContent().build();
     }
 
-    // =====================================================
+    //DELETE /utilisateurs/moi
+    @DeleteMapping("/utilisateurs/moi")
+    public ResponseEntity<Void> supprimerMonCompte() {
+        utilisateurService.supprimerMonCompte();
+        return ResponseEntity.noContent().build();
+    }
+
+
     // ROUTES ADMIN - /admin/utilisateurs
     // =====================================================
 

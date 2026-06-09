@@ -1,0 +1,367 @@
+
+SEASIDE 2.0 — DOCUMENTATION API REST
+Backend : Spring Boot | 
+
+
+Base URL : http://localhost:8080/api
+
+ 
+
+
+
+
+
+
+LÉGENDE
+  [PUBLIC]  → pas besoin de token
+  [JWT]     → Header obligatoire : Authorization: Bearer <token>
+  [ADMIN]   → JWT requis + rôle ADMIN uniquement
+ 
+
+1. AUTHENTIFICATION — /auth
+ 
+────────────────────────────────────────────────────────────────
+POST /auth/register [PUBLIC]
+Créer un nouveau compte utilisateur
+────────────────────────────────────────────────────────────────
+BODY (JSON) :
+{
+  "nomUtilisateur": "Mickael",      // string, 3-50 chars, obligatoire
+  "email":          "mickael@gmail.com",  // string, format email, obligatoire
+  "motDePasse":     "mickael123456",   // string, min 6 chars, obligatoire
+  "role": "ADMIN"
+}
+ 
+RÉPONSE 201 Created :
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJzdWIiOiJtaWNrYWVsQGdtYWlsLmNvbSIsImlhdCI6MTc4MDk3NDMyOCwiZXhwIjoxNzgwOTc3OTI4fQ.j9JuQ9kIA5yCtC2WLVCPwhR6NjKsO57Un8Neodk9au4",
+    "refreshToken": "ade771d8-2010-4401-952c-45ca26667662",
+    "type": "Bearer",
+    "email": "mickael@gmail.com",
+    "nomUtilisateur": "Mickael",
+    "role": "ADMIN"
+}
+ 
+ERREURS :
+  400 → { "code": 400, "message": "Cet email est déjà utilisé" }
+  400 → { "code": 400, "message": "Ce nom d'utilisateur est déjà pris" }
+  400 → { "nomUtilisateur": "Le nom doit faire entre 3 et 50 caractères" }
+  400 → { "email": "Format email invalide" }
+  400 → { "motDePasse": "Le mot de passe doit faire au moins 6 caractères" }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+────────────────────────────────────────────────────────────────
+POST /auth/login [PUBLIC]
+Connexion et récupération des tokens
+────────────────────────────────────────────────────────────────
+BODY (JSON) :
+{
+  "email":      "mickael@gmail.com",   // string, obligatoire
+  "motDePasse": "mickael123456"      // string, obligatoire
+}
+ 
+RÉPONSE 200 OK :
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJzdWIiOiJtaWNrYWVsQGdtYWlsLmNvbSIsImlhdCI6MTc4MDk3NDU3MywiZXhwIjoxNzgwOTc4MTczfQ.XJxgVZKDZ4iTIPTg7KvQhZ9zdA9jsllbCBL5KLdKEXQ",
+    "refreshToken": "9f15ae84-afc9-44db-92ba-ece8fd6f7733",
+    "type": "Bearer",
+    "email": "mickael@gmail.com",
+    "nomUtilisateur": "Mickael",
+    "role": "ADMIN"
+} 
+ERREURS :
+  401 → { "code": 401, "message": "Email ou mot de passe incorrect" }
+  400 → { "email": "Format email invalide" }
+ 
+
+
+
+
+
+────────────────────────────────────────────────────────────────
+POST /auth/refresh [PUBLIC]
+Obtenir un nouvel access token sans se reconnecter
+────────────────────────────────────────────────────────────────
+BODY (JSON) :
+{
+  "refreshToken": "439e34f1-fbb8-41fc-af1d-178cfee665b8"  // obligatoire
+}
+ 
+RÉPONSE 200 OK :
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJzdWIiOiJtaWNrYWVsQGdtYWlsLmNvbSIsImlhdCI6MTc4MDk3NTEzOCwiZXhwIjoxNzgwOTc4NzM4fQ.PEHiydPjSiruDFq_kJfA0RtHXyg8SLZndeza472pNdA",
+    "refreshToken": "439e34f1-fbb8-41fc-af1d-178cfee665b8",
+    "type": "Bearer",
+    "email": "mickael@gmail.com",
+    "nomUtilisateur": "Mickael",
+    "role": "ADMIN"
+}
+ 
+ERREURS :
+  401 → { "code": 401, "message": "Refresh token invalide" }
+  401 → { "code": 401, "message": "Refresh token expiré — veuillez vous reconnecter" }// Raha ohatra izy mihoatra duree
+ 
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────
+POST /auth/logout [JWT]
+Déconnexion — invalide le refresh token en base
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token>
+ 
+BODY : aucun
+ 
+RÉPONSE 204 No Content (pas de body)
+ 
+ERREURS :
+  403 → token absent ou invalide
+ 
+
+
+
+
+
+
+
+2. UTILISATEUR — /utilisateurs
+
+
+ 
+────────────────────────────────────────────────────────────────
+GET /utilisateurs/moi [JWT]
+Voir son propre profil
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token>
+ 
+BODY : aucun
+ 
+RÉPONSE 200 OK :
+{
+    "id": "a6809b2d-08c4-4a76-ac97-cc92183a07f0",
+    "nomUtilisateur": "Mickael",
+    "email": "mickael@gmail.com",
+    "role": "ADMIN",
+    "estActif": true,
+    "dateCreation": "2026-06-09T06:05:28.634245",
+    "nombreEvenments": 0
+} 
+
+
+
+
+
+────────────────────────────────────────────────────────────────
+PUT /utilisateurs/moi [JWT]
+Modifier son nom d'utilisateur et/ou email
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token>
+ 
+BODY (JSON) — tous les champs sont optionnels :
+{
+  "nomUtilisateur": "jean_nouveau",        // string, 3-50 chars
+  "email":          "nouveau@seaside.mg"   // string, format email
+}
+ 
+RÉPONSE 200 OK :
+{
+    "id": "a6809b2d-08c4-4a76-ac97-cc92183a07f0",
+    "nomUtilisateur": "Micka",
+    "email": "mickael@gmail.com",
+    "role": "ADMIN",
+    "estActif": true,
+    "dateCreation": "2026-06-09T06:05:28.634245",
+    "nombreEvenments": 0
+}
+ 
+ERREURS :
+  400 → { "code": 400, "message": "Cet email est déjà utilisé par un autre compte" }
+  400 → { "code": 400, "message": "Ce nom d'utilisateur est déjà pris" }
+ 
+
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────
+PATCH /utilisateurs/moi/mot-de-passe [JWT]
+Changer son mot de passe
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token>
+ 
+BODY (JSON) :
+{
+  "ancienMotDePasse":   "mickael123456",   // string, obligatoire
+  "nouveauMotDePasse":  "micka123456",   // string, min 6 chars, obligatoire
+  "confirmation":       "micka123456"    // string, doit être identique au nouveau
+}
+ 
+RÉPONSE 204 No Content (pas de body)
+→ Tous les refresh tokens sont invalidés — reconnexion requise
+ 
+ERREURS :
+  400 → { "code": 400, "message": "Ancien mot de passe incorrect" }
+  400 → { "code": 400, "message": "La confirmation ne correspond pas" }
+  400 → { "code": 400, "message": "Le nouveau mot de passe doit être différent de l'ancien" }
+ 
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────
+DELETE /utilisateurs/moi 
+Supprimer son propre compte
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token>
+ 
+BODY : aucun
+ 
+RÉPONSE 204 No Content
+→ Compte + événements + entrées + refresh tokens supprimés
+ 
+
+
+
+
+
+
+
+================================================================
+3. ADMIN UTILISATEURS — /admin/utilisateurs
+================================================================
+ 
+────────────────────────────────────────────────────────────────
+GET /admin/utilisateurs [ADMIN]
+Liste tous les utilisateurs
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token_admin>
+ 
+RÉPONSE 200 OK :
+[
+    {
+        "id": "aa87013b-5a02-4fd4-8ce5-2e684712216f",
+        "nomUtilisateur": "Jean Jessy",
+        "email": "jean@example.com",
+        "role": "ADMIN",
+        "estActif": true,
+        "dateCreation": "2026-05-28T22:35:25.222996",
+        "nombreEvenments": 3
+    },
+    {
+        "id": "2d7398e3-4610-4012-9430-ab29ecbaf861",
+        "nomUtilisateur": "Jessy",
+        "email": "jessy@gmail.com",
+        "role": "CLIENT",
+        "estActif": true,
+        "dateCreation": "2026-06-09T05:43:58.271478",
+        "nombreEvenments": 0
+    },
+    {
+        "id": "efc55574-74da-4049-a992-972fecfa2c89",
+        "nomUtilisateur": "Fortuno",
+        "email": "fortuno@gmail.com",
+        "role": "CLIENT",
+        "estActif": true,
+        "dateCreation": "2026-06-09T05:53:35.885062",
+        "nombreEvenments": 0
+    },
+    {
+        "id": "a6809b2d-08c4-4a76-ac97-cc92183a07f0",
+        "nomUtilisateur": "Mickael",
+        "email": "mickael@gmail.com",
+        "role": "ADMIN",
+        "estActif": true,
+        "dateCreation": "2026-06-09T06:05:28.634245",
+        "nombreEvenments": 0
+    }
+]
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────
+PATCH /admin/utilisateurs/{id}/activer                     [ADMIN]
+Activer un compte utilisateur désactivé
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token_admin>
+ 
+PARAMS URL :
+  id → UUID de l'utilisateur à activer
+ 
+BODY : aucun
+ 
+RÉPONSE 200 OK :
+{
+  "id":               
+  "nomUtilisateur":   
+  "email":          
+  "role":             
+  "estActif":         
+  "dateCreation":     
+  "nombreEvenements": 
+}
+ 
+ERREURS :
+  400 → { "code": 400, "message": "Utilisateur introuvable" }
+  403 → token absent, invalide ou rôle CLIENT
+ 
+────────────────────────────────────────────────────────────────
+PATCH /admin/utilisateurs/{id}/desactiver               [ADMIN]
+Désactiver un compte — bloque la connexion immédiatement
+────────────────────────────────────────────────────────────────
+HEADERS :
+  Authorization: Bearer <access_token_admin>
+ 
+PARAMS URL :
+  id → UUID de l'utilisateur à désactiver
+ 
+BODY : aucun
+ 
+RÉPONSE 200 OK :
+{
+  "id":               ,
+  "nomUtilisateur":   ,
+  "email":            ",
+  "role":            ,
+  "estActif":       ,          ← devient false
+  "dateCreation":     ,
+  "nombreEvenements": 
+}

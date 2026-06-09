@@ -40,12 +40,15 @@ public class AuthService {
             throw new RuntimeException("Ce nom d'utilisateur est deja pris");
         }
 
+        
+
         // Creer l'utilisateur avec mot de passe  hashe par BCrypt
         Utilisateur utilisateur = Utilisateur.builder()
                 .nomUtilisateur(request.getNomUtilisateur())
                 .email(request.getEmail())
                 .motsDePasseHash(passwordEncoder.encode(request.getMotDePasse()))// ← hash BCrypt
-                .role(RoleUsers.CLIENT)
+                //.role(getRole(request))
+                .role(request.getRole())
                 .estActif(true)
                 .build();
 
@@ -116,5 +119,16 @@ public class AuthService {
         Utilisateur utilisateur = (Utilisateur) SecurityContextHolder
                 .getContext().getAuthentication().getPrincipal();
         refreshTokenService.supprimerParUtilisateur(utilisateur);
+    }
+
+    private RoleUsers getRole(RegisterRequest r) {
+        if (r.getRole().equals("ADMIN")) {
+            return RoleUsers.ADMIN;
+        } else if (r.getRole().equals("CLIENT")) {
+            return RoleUsers.CLIENT;
+        }else {
+            return RoleUsers.COMPTOIRE;
+        }
+        
     }
 }

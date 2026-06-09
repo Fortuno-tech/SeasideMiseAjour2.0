@@ -1,7 +1,10 @@
 package com.seaside.seaside_api.dto.request;
 
+import com.seaside.seaside_api.entity.enums.RoleUsers;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -18,4 +21,7 @@ public class RegisterRequest {
     @NotBlank(message = "Le mot de passe est obligatoire")
     @Size(min = 6, message = "Le mot de passe doit faire au moins 6 caracteres")
     private String motDePasse;
+
+    @NotNull(message = "Le role est obligatoire")
+    private RoleUsers role;
 }
