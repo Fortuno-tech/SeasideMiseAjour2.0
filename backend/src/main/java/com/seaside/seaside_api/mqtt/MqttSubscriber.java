@@ -6,8 +6,11 @@ import com.seaside.seaside_api.entity.Entree;
 import com.seaside.seaside_api.repository.CategorieRepository;
 import com.seaside.seaside_api.repository.EntreeRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
  
 import java.util.Map;
@@ -25,6 +28,7 @@ public class MqttSubscriber {
     private final ObjectMapper         objectMapper;
  
     // ─── Point d'entrée : appelé par MqttConfig ─────────────
+    @Transactional
     public void traiter(String topic, String payload) {
         try {
             // Topic format : seaside/entrees/{categorieId}
@@ -50,7 +54,9 @@ public class MqttSubscriber {
             }
  
             Categorie categorie = categorieOpt.get();
- 
+            
+            //Hibernate.initialize(categorie.getEntrees());
+
             // Vérifier capacité
             if (categorie.estComplete()) {
                 log.warn("Capacité max atteinte pour catégorie : {}", categorie.getNom());

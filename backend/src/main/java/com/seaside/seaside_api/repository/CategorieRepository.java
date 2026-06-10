@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.seaside.seaside_api.entity.Categorie;
@@ -17,4 +19,7 @@ public interface CategorieRepository extends JpaRepository<Categorie, UUID>{
     Optional<Categorie> findByIdAndEvenementId(UUID id, UUID evenementId);
 
     List<Categorie> findByEvenementIdAndEstActif(UUID evenementId, Boolean estActif);   
+
+    @Query("SELECT COALESCE(SUM(e.comptage), 0) FROM Entree e WHERE e.categorie.id = :categorieId")
+    int getNombreEntreesByCategorieId(@Param("categorieId") UUID categorieId);  
 } 

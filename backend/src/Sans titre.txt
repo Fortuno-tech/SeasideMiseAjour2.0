@@ -1,0 +1,16 @@
+
+
+
+Fonctionnalité vita androany: Cote software
+
+
+🎗️ Installation et Configuration Mosquitto (MQTT) , Mosquitto demarré. pres a recevoir, publier, souscription des messages  👍OK
+🎗️ Codages des  endpoints aux frontends, ainsi que l'endpoints a ESP32 (Firmware) .                                	     👍OK
+🎗️ Connexion de mosquitto a backend
+
+
+
+
+
+
+

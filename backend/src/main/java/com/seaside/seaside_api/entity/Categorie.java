@@ -42,6 +42,7 @@ public class Categorie {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "evenement_id", nullable = false)
+    @JsonIgnore
     private Evenement evenement;
 
     @NotBlank
@@ -71,6 +72,7 @@ public class Categorie {
     private List<Entree> entrees;
 
     // Methodes calcules
+    @JsonIgnore
     public Integer getNombreEntrees() {
         if (entrees == null) return 0;
         return entrees.stream()
@@ -78,10 +80,12 @@ public class Categorie {
                 .sum();
     }
 
+    @JsonIgnore
     public BigDecimal getRevenuCategorie() {
         return prix.multiply(BigDecimal.valueOf(getNombreEntrees()));
     }
 
+    @JsonIgnore
     public Boolean estComplete() {
         return getNombreEntrees() >= capacite;
     }

@@ -41,7 +41,8 @@ public class MqttConfig {
         options.setServerURIs(new String[]{brokerUrl});
         options.setCleanSession(true);
         options.setAutomaticReconnect(true);   // reconnexion automatique
-        options.setKeepAliveInterval(60);
+        options.setKeepAliveInterval(30);
+        options.setConnectionTimeout(30);
         factory.setConnectionOptions(options);
         return factory;
     }

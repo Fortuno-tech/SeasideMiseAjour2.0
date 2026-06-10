@@ -1,0 +1,6 @@
+- Développement système d’authentification
+- Hash sécurisé des mots de passe
+- Début sécurisation JWT
+
+
+

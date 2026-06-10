@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.seaside.seaside_api.dto.request.ChangeMotDePasseRequest;
 import com.seaside.seaside_api.dto.request.ChangeRoleRequest;
 import com.seaside.seaside_api.dto.request.ModifierProfilRequest;
+import com.seaside.seaside_api.dto.request.ModifierUtilisateurAdminRequest;
 import com.seaside.seaside_api.dto.request.ResetMotDePasseAdminRequest;
 import com.seaside.seaside_api.dto.response.UtilisateurResponse;
 import com.seaside.seaside_api.entity.Utilisateur;
@@ -87,6 +88,15 @@ public class UtilisateurController {
             @PathVariable UUID id,
             @Valid @RequestBody ChangeRoleRequest req) {
         return ResponseEntity.ok(utilisateurService.changerRole(id, req));
+    }
+
+
+    @PutMapping("/admin/utilisateurs/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UtilisateurResponse> modifierUtilisateur(
+            @PathVariable UUID id,
+            @Valid @RequestBody ModifierUtilisateurAdminRequest req) {
+        return ResponseEntity.ok(utilisateurService.modifierUtilisateurAdmin(id, req));
     }
 
     @DeleteMapping("/admin/utilisateurs/{id}")
