@@ -1,20 +1,20 @@
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
-# Copier le pom.xml pour télécharger les dépendances (cache Docker)
+# 1. Copier pom.xml pour les dépendances (cache)
 COPY pom.xml .
 RUN apt-get update && apt-get install -y maven && \
     mvn dependency:go-offline && \
     apt-get remove -y maven && apt-get autoremove -y
 
-# Copier le code source et build
+# 2. Copier le code source ET build
 COPY src ./src
 RUN apt-get update && apt-get install -y maven && \
     mvn clean package -DskipTests && \
     apt-get remove -y maven && apt-get autoremove -y
 
-# Copier le JAR
+# 3. Copier le JAR
 COPY target/*.jar app.jar
 
 EXPOSE 8080
